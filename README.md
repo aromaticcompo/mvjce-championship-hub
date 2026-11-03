@@ -4,13 +4,20 @@ Responsive inter-department sports fixtures, scores, standings and animated matc
 
 ## Features
 
-- Filter matches by sport, department, date and status.
-- Use three direct views: Matches, Standings and Contacts. Sport and status are immediately available; date and department are under More filters. Browser Back/Forward and direct links work, and selections persist between views.
-- View scores in animated arenas for football, basketball, cricket, volleyball, badminton, table tennis, athletics and chess.
+- Filter matches by event, department, date and status.
+- Use three direct views: Matches, Standings and Contacts. Event and status are immediately available; date and department are under More filters. Browser Back/Forward and direct links work, and selections persist between views.
+- View scores in animated arenas for all 10 registered sports. Events without fixtures have an arena preview with no invented teams, dates or scores.
 - See period-by-period scorecards and department medal standings.
 - Replay or pause arena entrances; reduced-motion preferences are respected.
 
 ## Event data
+
+The supplied event roster is stored in `data.js` under `eventGroups`:
+
+- **Boys:** Kho Kho, Kabaddi, Football, Basketball, Cricket, Volleyball, Handball, Chess, Table Tennis.
+- **Girls:** Table Tennis, Kabaddi, Volleyball, Throwball, Chess.
+
+The picker groups all 14 events by category. Only sample fixtures matching a registered sport/category pair appear. Men/Women labels map to Boys/Girls; legacy examples outside the roster and unassigned Open entries remain in the source but are hidden.
 
 All current fixtures, scores, dates, venues, department lists and medal rules are sample data. The website is an independent design preview. It does not connect to a live scoring service.
 
@@ -47,3 +54,5 @@ All application files use relative paths, so project-site URLs are supported. `.
 ## External assets
 
 Fonts: DM Sans and Barlow Condensed via Google Fonts, with system fallbacks. Hero photograph: Unsplash image `photo-1521412644187-c49fa049e84d`. Arena surfaces and camera effects are original SVG/CSS illustrations, not player tracking.
+
+New court illustration references: [KKFI](https://khokhofederation.in/rules-regulations/), [Rajasthan government](https://nrega.rajasthan.gov.in/Upload/circulars/Panchyatkhel_sankul.pdf), [IKF](https://www.kabaddiikf.com/images/new-IKF_Rules.pdf), [IHF](https://www.ihf.info/sites/default/files/2020-05/H%40S%20Booklet.pdf), [TFI](https://throwballindia.org/court-of-throwball). Kabaddi layouts distinguish Boys' and Girls' events. Arena geometry is illustrative, not a campus measurement claim.

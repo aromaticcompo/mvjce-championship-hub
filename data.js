@@ -1,7 +1,12 @@
-// All records below are illustrative. Replace with approved championship data.
+// Event roster supplied by the user. Match records and standings are illustrative.
 // This preview has no live score service. Never present these records as official.
 window.CHAMPIONSHIP = {
   sample: true,
+  // Event roster supplied by the organising user; fixtures below remain examples.
+  eventGroups: [
+    { category: 'Boys', sports: ['Kho Kho','Kabaddi','Football','Basketball','Cricket','Volleyball','Handball','Chess','Table Tennis'] },
+    { category: 'Girls', sports: ['Table Tennis','Kabaddi','Volleyball','Throwball','Chess'] }
+  ],
   coordinators: [], // Add approved { sport, name, phone, email } contacts here.
   departments: [
     { id: 'CSE', name: 'Computer Science', color: '#48672b', bg: '#e5edce' },
@@ -12,14 +17,9 @@ window.CHAMPIONSHIP = {
     { id: 'CV', name: 'Civil Engineering', color: '#835c70', bg: '#f0e3eb' }
   ],
   sports: [
-    { name: 'Football', icon: '⚽', venue: 'Main football ground' },
-    { name: 'Basketball', icon: '◉', venue: 'Basketball court' },
-    { name: 'Cricket', icon: '🏏', venue: 'Cricket ground' },
-    { name: 'Volleyball', icon: '◈', venue: 'Volleyball court' },
-    { name: 'Badminton', icon: '⌁', venue: 'Indoor sports hall' },
-    { name: 'Table tennis', icon: '◒', venue: 'Indoor sports hall' },
-    { name: 'Athletics', icon: '↗', venue: 'Athletics track' },
-    { name: 'Chess', icon: '♞', venue: 'Activity room' }
+    { name: 'Kho Kho' }, { name: 'Kabaddi' }, { name: 'Football' },
+    { name: 'Basketball' }, { name: 'Cricket' }, { name: 'Volleyball' },
+    { name: 'Handball' }, { name: 'Chess' }, { name: 'Table Tennis' }, { name: 'Throwball' }
   ],
   standings: [
     { dept: 'CSE', gold: 4, silver: 2, bronze: 3 },

@@ -2,7 +2,12 @@ const data = window.CHAMPIONSHIP;
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const departments = Object.fromEntries(data.departments.map(d => [d.id, d]));
-const filters = { sport:'all', date:'all', department:'all', status:'all' };
+const events=data.eventGroups.flatMap(group=>group.sports.map(sport=>({id:`${group.category.toLowerCase()}-${sport.toLowerCase().replace(/\s+/g,'-')}`,sport,category:group.category})));
+const categoryName=value=>({Men:'Boys',Women:'Girls',Boys:'Boys',Girls:'Girls'}[value]||value);
+const eventMatches=(match,event)=>match.sport===event.sport&&match.category===event.category;
+// Keep legacy example records intact, but show only registered event/category pairs.
+const matchesForRoster=data.matches.map(match=>({...match,sport:data.sports.find(s=>s.name.toLowerCase()===match.sport.toLowerCase())?.name||match.sport,category:categoryName(match.category)})).filter(match=>events.some(event=>eventMatches(match,event)));
+const filters = { event:'all', date:'all', department:'all', status:'all' };
 const team = id => `<span class="team">${esc(id)}</span>`;
 const statusText = {live:'LIVE', upcoming:'UPCOMING', completed:'COMPLETED'};
 const status = m => `<span class="status ${m.status}">${statusText[m.status]}</span>`;
@@ -11,25 +16,27 @@ const date = value => new Date(`${value}T12:00:00+05:30`).toLocaleDateString('en
 const fullDate = value => new Date(`${value}T12:00:00+05:30`).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
 const score = m => m.status==='upcoming' ? '<span class="score"><small>VS</small></span>' : `<span class="score">${esc(m.scoreA)}<small>–</small>${esc(m.scoreB)}</span>`;
 
-data.sports.forEach(s=>$('#sport-filter').add(new Option(s.name,s.name)));
-[...new Set(data.matches.map(m=>m.date))].sort().forEach(value=>$('#date-filter').add(new Option(fullDate(value),value)));
+$('#event-filter').innerHTML='<option value="all">All events</option>'+data.eventGroups.map(group=>`<optgroup label="${esc(group.category)}’ events">${events.filter(event=>event.category===group.category).map(event=>`<option value="${esc(event.id)}">${esc(event.sport)} · ${esc(event.category)}</option>`).join('')}</optgroup>`).join('');
+[...new Set(matchesForRoster.map(m=>m.date))].sort().forEach(value=>$('#date-filter').add(new Option(fullDate(value),value)));
 data.departments.forEach(d => $('#dept-filter').add(new Option(`${d.id} · ${d.name}`,d.id)));
 
 function renderFixtures(){
   const priority={live:0,upcoming:1,completed:2};
-  const matches=data.matches.filter(m => (filters.sport==='all'||m.sport===filters.sport)&&(filters.date==='all'||m.date===filters.date)&&(filters.department==='all'||m.a===filters.department||m.b===filters.department||m.participants?.includes(filters.department))&&(filters.status==='all'||m.status===filters.status)).sort((a,b)=>priority[a.status]-priority[b.status]||(a.date+a.time).localeCompare(b.date+b.time));
+  const selectedEvent=events.find(event=>event.id===filters.event);
+  const matches=matchesForRoster.filter(m => (filters.event==='all'||selectedEvent&&eventMatches(m,selectedEvent))&&(filters.date==='all'||m.date===filters.date)&&(filters.department==='all'||m.a===filters.department||m.b===filters.department||m.participants?.includes(filters.department))&&(filters.status==='all'||m.status===filters.status)).sort((a,b)=>priority[a.status]-priority[b.status]||(a.date+a.time).localeCompare(b.date+b.time));
   $('#result-count').textContent=`${matches.length} ${matches.length===1?'match':'matches'}`;
   $('#reset-filters').hidden=Object.values(filters).every(value=>value==='all');
   const extraCount=Number(filters.date!=='all')+Number(filters.department!=='all');
   $('#filter-count').hidden=extraCount===0;$('#filter-count').textContent=String(extraCount);
   document.querySelectorAll('#status-filters button').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.status===filters.status)));
-  $('#fixture-list').innerHTML=matches.length?matches.map(m=>`<button class="fixture-row reveal" data-match="${m.id}" aria-label="${m.status==='upcoming'?'Match details':'View score'}: ${esc(m.sport)}, ${m.participants?'all departments':`${esc(m.a)} versus ${esc(m.b)}`}, ${date(m.date)}, ${time(m.time)}"><span class="match-topline"><strong>${esc(m.sport)} · ${esc(m.category)}</strong>${status(m)}</span><span class="fixture-teams${m.participants?' participants':''}">${m.participants?'<span class="team">All departments</span>':`${team(m.a)}${score(m)}${team(m.b)}`}</span><span class="match-bottomline"><span class="match-facts">${date(m.date)} · ${time(m.time)}<small>${esc(m.venue)}</small></span><span class="match-action">${m.status==='upcoming'?'Details':'View score'} →</span></span></button>`).join(''):'<div class="empty">No matches. Try another filter.</div>';
+  const emptyText=selectedEvent&&!matchesForRoster.some(m=>eventMatches(m,selectedEvent))?'Fixtures pending.':'No matches for these filters.';
+  $('#fixture-list').innerHTML=matches.length?matches.map(m=>`<button class="fixture-row reveal" data-match="${m.id}" aria-label="${m.status==='upcoming'?'Match details':'View score'}: ${esc(m.sport)}, ${esc(m.category)}, ${m.participants?'all departments':`${esc(m.a)} versus ${esc(m.b)}`}, ${date(m.date)}, ${time(m.time)}"><span class="match-topline"><strong>${esc(m.sport)} · ${esc(m.category)}</strong>${status(m)}</span><span class="fixture-teams${m.participants?' participants':''}">${m.participants?'<span class="team">All departments</span>':`${team(m.a)}${score(m)}${team(m.b)}`}</span><span class="match-bottomline"><span class="match-facts">${date(m.date)} · ${time(m.time)}<small>${esc(m.venue)}</small></span><span class="match-action">${m.status==='upcoming'?'Details':'View score'} →</span></span></button>`).join(''):`<div class="empty event-empty"><p>${emptyText}</p>${selectedEvent?`<button type="button" class="event-preview" data-event-preview="${esc(selectedEvent.id)}" aria-label="Preview ${esc(selectedEvent.sport)} arena, ${esc(selectedEvent.category)}">View arena →</button>`:''}</div>`;
 }
-$('#sport-filter').addEventListener('change',event=>{filters.sport=event.target.value;renderFixtures();});
+$('#event-filter').addEventListener('change',event=>{filters.event=event.target.value;renderFixtures();});
 $('#date-filter').addEventListener('change',event=>{filters.date=event.target.value;renderFixtures();});
 $('#dept-filter').addEventListener('change',event=>{filters.department=event.target.value;renderFixtures();});
 $('#status-filters').addEventListener('click',event=>{const button=event.target.closest('button[data-status]');if(!button)return;filters.status=button.dataset.status;renderFixtures();});
-$('#reset-filters').addEventListener('click',()=>{Object.keys(filters).forEach(key=>filters[key]='all');['#sport-filter','#dept-filter','#date-filter'].forEach(selector=>$(selector).value='all');$('#more-filters').open=false;renderFixtures();});
+$('#reset-filters').addEventListener('click',()=>{Object.keys(filters).forEach(key=>filters[key]='all');['#event-filter','#dept-filter','#date-filter'].forEach(selector=>$(selector).value='all');$('#more-filters').open=false;renderFixtures();});
 renderFixtures();
 
 const standings=data.standings.map(d=>({...d,points:d.gold*5+d.silver*3+d.bronze})).sort((a,b)=>b.points-a.points||b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
@@ -48,9 +55,10 @@ $('#coordinator-search').addEventListener('input',renderCoordinators);renderCoor
 
 const dialog=$('#match-dialog');let lastMatchButton;
 function showMatch(id,trigger){
-  const m=data.matches.find(item=>item.id===id);if(!m)return;
+  const m=matchesForRoster.find(item=>item.id===id);if(!m)return;
   lastMatchButton=trigger;
   $('#match-title').textContent=`${m.sport} · ${m.category}`;
+  $('.dialog-demo').textContent='Demo data';
   const matchTeam=id=>`<div class="detail-team"><strong>${esc(id)}</strong><small>${esc(departments[id].name)}</small></div>`;
   const detail=$('#match-detail');
   const scoreboard=`<div class="arena-score-top">${status(m)}${m.status==='live'&&m.progress?`<strong>${esc(m.progress)}</strong>`:''}</div><div class="detail-scoreboard">${m.participants?`<div class="athletics-depts">${m.participants.map(esc).join(' · ')}</div>`:`${matchTeam(m.a)}${score(m)}${matchTeam(m.b)}`}</div><div class="arena-score-bottom">${esc(m.stage)} · ${esc(m.venue)}</div>`;
@@ -59,7 +67,16 @@ function showMatch(id,trigger){
   window.MatchCourt.initialise(detail);
   dialog.showModal();dialog.scrollTop=0;document.body.style.overflow='hidden';
 }
-document.addEventListener('click',event=>{const trigger=event.target.closest('[data-match]');if(trigger)showMatch(trigger.dataset.match,trigger);});
+function showEvent(id,trigger){
+  const event=events.find(item=>item.id===id);if(!event)return;
+  lastMatchButton=trigger;
+  $('#match-title').textContent=`${event.sport} · ${event.category}`;
+  $('.dialog-demo').textContent='Arena preview';
+  $('#match-detail').innerHTML=window.MatchCourt.render(event,'<div class="arena-pending">Fixtures pending</div>',esc);
+  window.MatchCourt.initialise($('#match-detail'));
+  dialog.showModal();dialog.scrollTop=0;document.body.style.overflow='hidden';
+}
+document.addEventListener('click',event=>{const match=event.target.closest('[data-match]');if(match){showMatch(match.dataset.match,match);return;}const preview=event.target.closest('[data-event-preview]');if(preview)showEvent(preview.dataset.eventPreview,preview);});
 $('#close-dialog').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}});
 dialog.addEventListener('close',()=>{document.body.style.overflow='';lastMatchButton?.focus({preventScroll:true});});
