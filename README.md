@@ -1,2 +1,48 @@
-# mvjce-championship-hub
-MVJCE inter-department sports: fixtures, scores, standings and animated match arenas.
+# MVJCE Championship Hub
+
+Responsive inter-department sports fixtures, scores, standings and animated match arenas.
+
+## Features
+
+- Filter matches by sport, department, date and status.
+- View scores in animated arenas for football, basketball, cricket, volleyball, badminton, table tennis, athletics and chess.
+- See period-by-period scorecards and department medal standings.
+- Replay or pause arena entrances; reduced-motion preferences are respected.
+
+## Event data
+
+All current fixtures, scores, dates, venues, department lists and medal rules are sample data. The website is an independent design preview. It does not connect to a live scoring service.
+
+Edit `data.js` to add approved event records. Add approved coordinator entries to `coordinators` using `{ sport, name, phone, email }`. Real-time scoring requires a trusted data service.
+
+The sample medal rule is gold = 5 points, silver = 3, bronze = 1. All match times display in IST.
+
+## Run locally
+
+No build or dependency installation is required. Serve this directory with a static web server, for example:
+
+```sh
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000`.
+
+## GitHub Pages
+
+This repository is ready for branch-based publishing: **Settings → Pages → Deploy from a branch → main → / (root) → Save**.
+
+All application files use relative paths, so project-site URLs are supported. `.nojekyll` keeps publishing static files without Jekyll processing.
+
+## Files
+
+| File | Purpose |
+| --- | --- |
+| `index.html` | Page structure |
+| `data.js` | Fixtures, standings and contacts |
+| `app.js` | Filtering, scorecards and navigation |
+| `courts.js` | Sport-specific SVG arenas and controls |
+| `styles.css`, `courts.css`, `compact.css` | Styling, animation and compact layout |
+
+## External assets
+
+Fonts: DM Sans and Barlow Condensed via Google Fonts, with system fallbacks. Hero photograph: Unsplash image `photo-1521412644187-c49fa049e84d`. Arena surfaces and camera effects are original SVG/CSS illustrations, not player tracking.
