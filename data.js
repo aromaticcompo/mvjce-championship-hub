@@ -1,4 +1,4 @@
-// Event roster supplied by the user. Match records and standings are illustrative.
+// Event roster supplied by the user. Match records are illustrative.
 // This preview has no live score service. Never present these records as official.
 window.CHAMPIONSHIP = {
   sample: true,
@@ -7,7 +7,6 @@ window.CHAMPIONSHIP = {
     { category: 'Boys', sports: ['Kho Kho','Kabaddi','Football','Basketball','Cricket','Volleyball','Handball','Chess','Table Tennis'] },
     { category: 'Girls', sports: ['Table Tennis','Kabaddi','Volleyball','Throwball','Chess'] }
   ],
-  coordinators: [], // Add approved { sport, name, phone, email } contacts here.
   departments: [
     { id: 'CSE', name: 'Computer Science', color: '#48672b', bg: '#e5edce' },
     { id: 'ECE', name: 'Electronics & Communication', color: '#8c5f37', bg: '#f2e6d8' },
@@ -20,14 +19,6 @@ window.CHAMPIONSHIP = {
     { name: 'Kho Kho' }, { name: 'Kabaddi' }, { name: 'Football' },
     { name: 'Basketball' }, { name: 'Cricket' }, { name: 'Volleyball' },
     { name: 'Handball' }, { name: 'Chess' }, { name: 'Table Tennis' }, { name: 'Throwball' }
-  ],
-  standings: [
-    { dept: 'CSE', gold: 4, silver: 2, bronze: 3 },
-    { dept: 'ECE', gold: 3, silver: 3, bronze: 2 },
-    { dept: 'ME', gold: 2, silver: 3, bronze: 3 },
-    { dept: 'ISE', gold: 2, silver: 1, bronze: 4 },
-    { dept: 'EEE', gold: 1, silver: 2, bronze: 3 },
-    { dept: 'CV', gold: 1, silver: 2, bronze: 1 }
   ],
   matches: [
     { id:'fb-01', sport:'Football', category:'Men', stage:'Semi-final 01', date:'2026-11-03', time:'10:00', a:'CSE', b:'ME', status:'live', scoreA:'2', scoreB:'1', progress:'67′ · Second half', venue:'Main football ground', note:'CSE lead by one goal in this sample match.', breakdown:[['First half','1','1'],['Second half','1','0']] },

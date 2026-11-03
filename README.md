@@ -1,13 +1,13 @@
 # MVJCE Championship Hub
 
-Responsive inter-department sports fixtures, scores, standings and animated match arenas.
+Responsive inter-department sports fixtures, schedules, live match scores and animated arenas.
 
 ## Features
 
 - Filter matches by event, department, date and status.
-- Use three direct views: Matches, Standings and Contacts. Event and status are immediately available; date and department are under More filters. Browser Back/Forward and direct links work, and selections persist between views.
+- Use one fixture and score view. Event and status are immediately available; date and department are under More filters. Each fixture shows its scheduled time and venue.
 - View scores in animated arenas for all 10 registered sports. Events without fixtures have an arena preview with no invented teams, dates or scores.
-- See period-by-period scorecards and department medal standings.
+- See live and completed match scores with period-by-period scorecards.
 - Replay or pause arena entrances; reduced-motion preferences are respected.
 
 ## Event data
@@ -19,11 +19,11 @@ The supplied event roster is stored in `data.js` under `eventGroups`:
 
 The picker groups all 14 events by category. Only sample fixtures matching a registered sport/category pair appear. Men/Women labels map to Boys/Girls; legacy examples outside the roster and unassigned Open entries remain in the source but are hidden.
 
-All current fixtures, scores, dates, venues, department lists and medal rules are sample data. The website is an independent design preview. It does not connect to a live scoring service.
+All current fixtures, scores, dates, venues and department lists are sample data. The website is an independent design preview. It does not connect to a live scoring service.
 
-Edit `data.js` to add approved event records. Add approved coordinator entries to `coordinators` using `{ sport, name, phone, email }`. Real-time scoring requires a trusted data service.
+Edit `data.js` to add approved event records. Real-time scoring requires a trusted data service.
 
-The sample medal rule is gold = 5 points, silver = 3, bronze = 1. All match times display in IST.
+All match times display in IST.
 
 ## Run locally
 
@@ -46,7 +46,7 @@ All application files use relative paths, so project-site URLs are supported. `.
 | File | Purpose |
 | --- | --- |
 | `index.html` | Page structure |
-| `data.js` | Fixtures, standings and contacts |
+| `data.js` | Event roster, fixtures and match scores |
 | `app.js` | Filtering, scorecards and navigation |
 | `courts.js` | Sport-specific SVG arenas and controls |
 | `styles.css`, `courts.css`, `compact.css`, `simple.css` | Styling, animation and simplified layout |

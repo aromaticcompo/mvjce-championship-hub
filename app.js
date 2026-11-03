@@ -39,20 +39,6 @@ $('#status-filters').addEventListener('click',event=>{const button=event.target.
 $('#reset-filters').addEventListener('click',()=>{Object.keys(filters).forEach(key=>filters[key]='all');['#event-filter','#dept-filter','#date-filter'].forEach(selector=>$(selector).value='all');$('#more-filters').open=false;renderFixtures();});
 renderFixtures();
 
-const standings=data.standings.map(d=>({...d,points:d.gold*5+d.silver*3+d.bronze})).sort((a,b)=>b.points-a.points||b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
-$('#leaderboard').innerHTML=standings.map((d,i)=>`<tr><td><span class="rank-dept"><span class="rank-number">${String(i+1).padStart(2,'0')}</span><span><strong>${esc(d.dept)}</strong><small>${esc(departments[d.dept].name)}</small></span></span></td><td>${d.gold}</td><td>${d.silver}</td><td>${d.bronze}</td><td>${d.points}</td></tr>`).join('');
-
-function renderCoordinators(){
-  const contacts=data.coordinators||[];
-  $('#coordinator-search-wrap').hidden=contacts.length===0;
-  $('#coordinator-grid').classList.toggle('has-contacts',contacts.length>0);
-  if(!contacts.length){$('#coordinator-grid').innerHTML='<p class="coordinator-empty">Coordinator contacts pending.</p>';return;}
-  const query=$('#coordinator-search').value.trim().toLowerCase();
-  const matches=contacts.filter(c=>`${c.sport} ${c.name}`.toLowerCase().includes(query));
-  $('#coordinator-grid').innerHTML=matches.length?matches.map(c=>`<article class="coordinator-card"><h3>${esc(c.sport)}</h3><p>${esc(c.name)}</p><div class="coordinator-contact">${c.phone?`<a href="tel:${String(c.phone).replace(/[^\d+]/g,'')}">${esc(c.phone)}</a>`:''}${c.email?`<a href="mailto:${encodeURIComponent(c.email)}">Email</a>`:''}</div></article>`).join(''):'<p class="coordinator-empty" role="status">No coordinators found.</p>';
-}
-$('#coordinator-search').addEventListener('input',renderCoordinators);renderCoordinators();
-
 const dialog=$('#match-dialog');let lastMatchButton;
 function showMatch(id,trigger){
   const m=matchesForRoster.find(item=>item.id===id);if(!m)return;
@@ -80,11 +66,3 @@ document.addEventListener('click',event=>{const match=event.target.closest('[dat
 $('#close-dialog').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}});
 dialog.addEventListener('close',()=>{document.body.style.overflow='';lastMatchButton?.focus({preventScroll:true});});
-function applyView(){
-  const requested=window.location.hash.slice(1);
-  const view=['fixtures','standings','coordinators'].includes(requested)?requested:'fixtures';
-  document.querySelectorAll('[data-view-section]').forEach(section=>section.hidden=section.id!==view);
-  document.querySelectorAll('nav [data-view]').forEach(link=>{if(link.dataset.view===view)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');});
-  window.scrollTo({top:0,behavior:'instant'});
-}
-window.addEventListener('hashchange',applyView);applyView();
