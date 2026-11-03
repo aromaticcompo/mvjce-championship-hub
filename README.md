@@ -5,6 +5,7 @@ Responsive inter-department sports fixtures, scores, standings and animated matc
 ## Features
 
 - Filter matches by sport, department, date and status.
+- Use three direct views: Matches, Standings and Contacts. Sport and status are immediately available; date and department are under More filters. Browser Back/Forward and direct links work, and selections persist between views.
 - View scores in animated arenas for football, basketball, cricket, volleyball, badminton, table tennis, athletics and chess.
 - See period-by-period scorecards and department medal standings.
 - Replay or pause arena entrances; reduced-motion preferences are respected.
@@ -41,7 +42,7 @@ All application files use relative paths, so project-site URLs are supported. `.
 | `data.js` | Fixtures, standings and contacts |
 | `app.js` | Filtering, scorecards and navigation |
 | `courts.js` | Sport-specific SVG arenas and controls |
-| `styles.css`, `courts.css`, `compact.css` | Styling, animation and compact layout |
+| `styles.css`, `courts.css`, `compact.css`, `simple.css` | Styling, animation and simplified layout |
 
 ## External assets
 

@@ -11,7 +11,8 @@ const date = value => new Date(`${value}T12:00:00+05:30`).toLocaleDateString('en
 const fullDate = value => new Date(`${value}T12:00:00+05:30`).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
 const score = m => m.status==='upcoming' ? '<span class="score"><small>VS</small></span>' : `<span class="score">${esc(m.scoreA)}<small>–</small>${esc(m.scoreB)}</span>`;
 
-$('#sport-filters').innerHTML = [{name:'All sports'}, ...data.sports].map((s,i)=>`<button data-sport="${i===0?'all':esc(s.name)}" class="${i===0?'selected':''}" aria-pressed="${i===0}">${esc(s.name)}</button>`).join('');
+data.sports.forEach(s=>$('#sport-filter').add(new Option(s.name,s.name)));
+[...new Set(data.matches.map(m=>m.date))].sort().forEach(value=>$('#date-filter').add(new Option(fullDate(value),value)));
 data.departments.forEach(d => $('#dept-filter').add(new Option(`${d.id} · ${d.name}`,d.id)));
 
 function renderFixtures(){
@@ -19,13 +20,16 @@ function renderFixtures(){
   const matches=data.matches.filter(m => (filters.sport==='all'||m.sport===filters.sport)&&(filters.date==='all'||m.date===filters.date)&&(filters.department==='all'||m.a===filters.department||m.b===filters.department||m.participants?.includes(filters.department))&&(filters.status==='all'||m.status===filters.status)).sort((a,b)=>priority[a.status]-priority[b.status]||(a.date+a.time).localeCompare(b.date+b.time));
   $('#result-count').textContent=`${matches.length} ${matches.length===1?'match':'matches'}`;
   $('#reset-filters').hidden=Object.values(filters).every(value=>value==='all');
-  $('#fixture-list').innerHTML=matches.length?matches.map(m=>`<button class="fixture-row reveal" data-match="${m.id}" aria-label="View ${esc(m.sport)}, ${m.participants?'all departments':`${esc(m.a)} versus ${esc(m.b)}`}, ${date(m.date)}, ${time(m.time)}"><span class="fixture-time">${m.status==='live'?status(m):time(m.time)}<small>${date(m.date)}</small></span><span class="fixture-sport"><strong>${esc(m.sport)} · ${esc(m.category)}</strong><small>${esc(m.stage)}</small></span><span class="fixture-teams">${m.participants?'<span class="team">100 m · All departments</span>':`${team(m.a)}${score(m)}${team(m.b)}`}</span><span class="fixture-venue">⌖ ${esc(m.venue)}${m.status==='completed'?'<br><small>Completed</small>':''}</span><span class="row-arrow" aria-hidden="true">↗</span></button>`).join(''):'<div class="empty"><strong>No fixtures found.</strong>Try another sport, date or department, or reset the filters.</div>';
+  const extraCount=Number(filters.date!=='all')+Number(filters.department!=='all');
+  $('#filter-count').hidden=extraCount===0;$('#filter-count').textContent=String(extraCount);
+  document.querySelectorAll('#status-filters button').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.status===filters.status)));
+  $('#fixture-list').innerHTML=matches.length?matches.map(m=>`<button class="fixture-row reveal" data-match="${m.id}" aria-label="${m.status==='upcoming'?'Match details':'View score'}: ${esc(m.sport)}, ${m.participants?'all departments':`${esc(m.a)} versus ${esc(m.b)}`}, ${date(m.date)}, ${time(m.time)}"><span class="match-topline"><strong>${esc(m.sport)} · ${esc(m.category)}</strong>${status(m)}</span><span class="fixture-teams${m.participants?' participants':''}">${m.participants?'<span class="team">All departments</span>':`${team(m.a)}${score(m)}${team(m.b)}`}</span><span class="match-bottomline"><span class="match-facts">${date(m.date)} · ${time(m.time)}<small>${esc(m.venue)}</small></span><span class="match-action">${m.status==='upcoming'?'Details':'View score'} →</span></span></button>`).join(''):'<div class="empty">No matches. Try another filter.</div>';
 }
-$('#sport-filters').addEventListener('click',event=>{const button=event.target.closest('button[data-sport]');if(!button)return;filters.sport=button.dataset.sport;$('#sport-filters').querySelectorAll('button').forEach(b=>{b.classList.toggle('selected',b===button);b.setAttribute('aria-pressed',b===button);});renderFixtures();});
-$('.date-group').addEventListener('click',event=>{const button=event.target.closest('button[data-date]');if(!button)return;filters.date=button.dataset.date;$('.date-group').querySelectorAll('button').forEach(b=>{b.classList.toggle('selected',b===button);b.setAttribute('aria-pressed',b===button);});renderFixtures();});
+$('#sport-filter').addEventListener('change',event=>{filters.sport=event.target.value;renderFixtures();});
+$('#date-filter').addEventListener('change',event=>{filters.date=event.target.value;renderFixtures();});
 $('#dept-filter').addEventListener('change',event=>{filters.department=event.target.value;renderFixtures();});
-$('#status-filter').addEventListener('change',event=>{filters.status=event.target.value;renderFixtures();});
-$('#reset-filters').addEventListener('click',()=>{Object.keys(filters).forEach(key=>filters[key]='all');$('#dept-filter').value='all';$('#status-filter').value='all';document.querySelectorAll('[data-sport],[data-date]').forEach(b=>{const selected=(b.dataset.sport||b.dataset.date)==='all';b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',selected);});renderFixtures();});
+$('#status-filters').addEventListener('click',event=>{const button=event.target.closest('button[data-status]');if(!button)return;filters.status=button.dataset.status;renderFixtures();});
+$('#reset-filters').addEventListener('click',()=>{Object.keys(filters).forEach(key=>filters[key]='all');['#sport-filter','#dept-filter','#date-filter'].forEach(selector=>$(selector).value='all');$('#more-filters').open=false;renderFixtures();});
 renderFixtures();
 
 const standings=data.standings.map(d=>({...d,points:d.gold*5+d.silver*3+d.bronze})).sort((a,b)=>b.points-a.points||b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
@@ -35,7 +39,7 @@ function renderCoordinators(){
   const contacts=data.coordinators||[];
   $('#coordinator-search-wrap').hidden=contacts.length===0;
   $('#coordinator-grid').classList.toggle('has-contacts',contacts.length>0);
-  if(!contacts.length){$('#coordinator-grid').innerHTML='<p class="coordinator-empty">Contacts pending.</p>';return;}
+  if(!contacts.length){$('#coordinator-grid').innerHTML='<p class="coordinator-empty">Coordinator contacts pending.</p>';return;}
   const query=$('#coordinator-search').value.trim().toLowerCase();
   const matches=contacts.filter(c=>`${c.sport} ${c.name}`.toLowerCase().includes(query));
   $('#coordinator-grid').innerHTML=matches.length?matches.map(c=>`<article class="coordinator-card"><h3>${esc(c.sport)}</h3><p>${esc(c.name)}</p><div class="coordinator-contact">${c.phone?`<a href="tel:${String(c.phone).replace(/[^\d+]/g,'')}">${esc(c.phone)}</a>`:''}${c.email?`<a href="mailto:${encodeURIComponent(c.email)}">Email</a>`:''}</div></article>`).join(''):'<p class="coordinator-empty" role="status">No coordinators found.</p>';
@@ -59,6 +63,11 @@ document.addEventListener('click',event=>{const trigger=event.target.closest('[d
 $('#close-dialog').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}});
 dialog.addEventListener('close',()=>{document.body.style.overflow='';lastMatchButton?.focus({preventScroll:true});});
-$('.menu-button').addEventListener('click',()=>{const open=$('nav').classList.toggle('open');$('.menu-button').setAttribute('aria-expanded',open);$('.menu-button').setAttribute('aria-label',open?'Close navigation':'Open navigation');$('.menu-button').textContent=open?'✕':'☰';});
-document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>{$('nav').classList.remove('open');$('.menu-button').setAttribute('aria-expanded','false');$('.menu-button').setAttribute('aria-label','Open navigation');$('.menu-button').textContent='☰';}));
-if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const hash='#'+entry.target.id;document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('active',a.hash===hash));}});},{rootMargin:'-10% 0px -65% 0px'});['home','fixtures','standings','coordinators'].forEach(id=>observer.observe(document.getElementById(id)));}
+function applyView(){
+  const requested=window.location.hash.slice(1);
+  const view=['fixtures','standings','coordinators'].includes(requested)?requested:'fixtures';
+  document.querySelectorAll('[data-view-section]').forEach(section=>section.hidden=section.id!==view);
+  document.querySelectorAll('nav [data-view]').forEach(link=>{if(link.dataset.view===view)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');});
+  window.scrollTo({top:0,behavior:'instant'});
+}
+window.addEventListener('hashchange',applyView);applyView();

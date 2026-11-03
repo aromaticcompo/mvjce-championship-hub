@@ -5,38 +5,35 @@
   <meta name="theme-color" content="#112c24">
   <title>MVJCE — The Championship</title>
   <meta name="description" content="MVJCE inter-department sports: fixtures, scores, standings and coordinators.">
-  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="courts.css"><link rel="stylesheet" href="compact.css">
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="courts.css"><link rel="stylesheet" href="compact.css"><link rel="stylesheet" href="simple.css">
 </head>
 <body>
-<a class="skip" href="#fixtures">Skip to fixtures</a>
-<div class="sample-banner">Demo · All event data is illustrative</div>
-<header>
-  <a class="brand" href="#home" aria-label="MVJCE Championship home"><span class="brand-icon">M<span>↗</span></span><span>MVJCE<small>THE CHAMPIONSHIP</small></span></a>
-  <nav aria-label="Main navigation"><a class="active" href="#fixtures">Matches</a><a href="#standings">Standings</a><a href="#coordinators">Coordinators</a></nav>
-  <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+<a class="skip" href="#fixtures">Skip to matches</a>
+<div class="sample-banner">Demo · Sample event data</div>
+<header class="app-header">
+  <a class="brand" href="#fixtures" aria-label="MVJCE Championship matches"><span class="brand-icon">M<span>↗</span></span><span>MVJCE<small>INTER-DEPARTMENT SPORTS</small></span></a>
+  <nav aria-label="Main navigation"><a href="#fixtures" data-view="fixtures" aria-current="page">Matches</a><a href="#standings" data-view="standings">Standings</a><a href="#coordinators" data-view="coordinators">Contacts</a></nav>
 </header>
-<main>
-<section id="home" class="hero">
-  <div class="hero-grid"></div><div class="track-art" aria-hidden="true"><div></div><div></div><div></div><div></div></div>
-  <span class="eyebrow">MVJCE · SPORTS</span>
-  <h1>INTER-DEPARTMENT<br><em>CHAMPIONSHIP</em></h1>
-</section>
-<section id="fixtures" class="fixtures-section wrap">
+<main id="home">
+<h1 class="sr-only">MVJCE Inter-Department Championship</h1>
+<section id="fixtures" class="fixtures-section wrap" data-view-section>
   <div class="section-heading"><h2>Matches</h2><span class="section-meta">Times in IST</span></div>
-  <div id="sport-filters" class="sport-filters" role="group" aria-label="Filter by sport"></div>
-  <div class="fixture-toolbar"><div class="date-group" role="group" aria-label="Filter by date"><button data-date="all" class="selected" aria-pressed="true">All dates</button><button data-date="2026-11-03" aria-pressed="false">03 Nov</button><button data-date="2026-11-04" aria-pressed="false">04 Nov</button><button data-date="2026-11-05" aria-pressed="false">05 Nov</button></div><div class="selects"><label class="sr-only" for="dept-filter">Department</label><select id="dept-filter"><option value="all">All departments</option></select><label class="sr-only" for="status-filter">Match status</label><select id="status-filter"><option value="all">All statuses</option><option value="live">Live</option><option value="upcoming">Upcoming</option><option value="completed">Completed</option></select></div></div>
-  <div class="results-label"><span id="result-count" role="status" aria-live="polite"></span><button class="text-button" id="reset-filters" hidden>Reset</button></div>
+  <div class="match-controls">
+    <label class="sport-picker" for="sport-filter"><span>Sport</span><select id="sport-filter"><option value="all">All sports</option></select></label>
+    <div id="status-filters" class="status-filters" role="group" aria-label="Match status"><button data-status="all" aria-pressed="true">All</button><button data-status="live" aria-pressed="false">Live</button><button data-status="upcoming" aria-pressed="false">Upcoming</button><button data-status="completed" aria-pressed="false">Results</button></div>
+    <details class="more-filters" id="more-filters"><summary>More filters <span id="filter-count" hidden></span><span class="filter-chevron" aria-hidden="true">⌄</span></summary><div class="filter-fields"><label for="date-filter">Date<select id="date-filter"><option value="all">All dates</option></select></label><label for="dept-filter">Department<select id="dept-filter"><option value="all">All departments</option></select></label></div></details>
+  </div>
+  <div class="results-label"><span id="result-count" role="status" aria-live="polite"></span><button class="text-button" id="reset-filters" hidden>Clear filters</button></div>
   <div id="fixture-list" class="fixture-list"></div>
 </section>
-<section id="standings" class="standings-section">
+<section id="standings" class="standings-section" data-view-section hidden>
   <div class="wrap standings-layout"><div class="section-heading"><h2>Standings</h2><span class="section-meta">Gold 5 · Silver 3 · Bronze 1</span></div><div class="standings-board"><div class="table-scroll"><table><caption class="sr-only">Department standings</caption><thead><tr><th scope="col">Department</th><th scope="col" title="Gold medals">G</th><th scope="col" title="Silver medals">S</th><th scope="col" title="Bronze medals">B</th><th scope="col">Points</th></tr></thead><tbody id="leaderboard"></tbody></table></div><div class="board-foot">Ties: gold → silver → bronze</div></div></div>
 </section>
-<section id="coordinators" class="coordinators-section wrap">
-  <div class="section-heading"><h2>Coordinators</h2><label class="search" id="coordinator-search-wrap" hidden><span>⌕</span><input id="coordinator-search" type="search" placeholder="Search" aria-label="Search coordinators"></label></div>
+<section id="coordinators" class="coordinators-section wrap" data-view-section hidden>
+  <div class="section-heading"><h2>Contacts</h2><label class="search" id="coordinator-search-wrap" hidden><span>⌕</span><input id="coordinator-search" type="search" placeholder="Search" aria-label="Search coordinators"></label></div>
   <div id="coordinator-grid" class="coordinator-grid"></div>
 </section>
 </main>
-<footer class="wrap"><a href="#home">Back to top ↑</a></footer>
 <dialog id="match-dialog" aria-labelledby="match-title"><div class="dialog-top"><h2 id="match-title">Match details</h2><span class="dialog-demo">Demo data</span><button id="close-dialog" class="close-button" aria-label="Close match details">✕</button></div><div id="match-detail"></div></dialog>
 <script src="data.js"></script><script src="courts.js"></script><script src="app.js"></script>
 </body></html>
