@@ -66,3 +66,50 @@ document.addEventListener('click',event=>{const match=event.target.closest('[dat
 $('#close-dialog').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}});
 dialog.addEventListener('close',()=>{document.body.style.overflow='';lastMatchButton?.focus({preventScroll:true});});
+
+// Event standings and overall rankings share the completed-result calculator.
+$('#points-event').innerHTML = $('#event-filter').innerHTML;
+let leaderboardCategory = 'all';
+const departmentMark = row => `<span class="department-mark" style="--department-color:${esc(row.color)};--department-bg:${esc(row.bg)}" aria-hidden="true">${esc(row.id)}</span>`;
+function renderPoints(){
+  const selected = events.find(event => event.id === $('#points-event').value);
+  const matches = selected ? matchesForRoster.filter(match => eventMatches(match,selected)) : matchesForRoster;
+  const table = window.ChampionshipRankings.calculate(data.departments,matches);
+  $('#points-summary').textContent = table.completed ? `${table.completed} completed ${table.completed===1?'match':'matches'}` : 'No completed results yet';
+  $('#points-body').innerHTML = table.rows.map(row => `<tr${row.rank===1&&row.wins>0?' class="leading-row"':''}><td class="position-cell">${row.rank??'<span aria-label="Unranked">—</span>'}</td><th scope="row"><span class="table-department">${departmentMark(row)}<span><strong>${esc(row.id)}</strong><small>${esc(row.name)}</small></span></span></th><td>${row.played}</td><td class="wins-cell">${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td></tr>`).join('');
+}
+function renderLeaderboard(){
+  const matches = leaderboardCategory === 'all' ? matchesForRoster : matchesForRoster.filter(match => match.category === leaderboardCategory);
+  const board = window.ChampionshipRankings.calculate(data.departments,matches);
+  const best = board.rows[0].wins;
+  const leaders = board.rows.filter(row => row.wins === best && best > 0);
+  $('#leaderboard-feature').innerHTML = leaders.length ? `<div class="leader-feature"><div><span class="leader-eyebrow">${leaders.length>1?'SHARED LEAD':'LEADING DEPARTMENT'}</span><h3>${leaders.map(row=>esc(row.id)).join(' · ')}</h3><p>${leaders.length===1?esc(leaders[0].name):'Equal wins. Equal rank.'}</p></div><div class="leader-total"><strong>${best}</strong><span>${best===1?'win':'wins'}</span></div><div class="leader-lines" aria-hidden="true"></div></div>` : `<div class="leader-pending"><span class="leader-eyebrow">THE RACE IS OPEN</span><h3>No wins recorded yet.</h3><p>Rankings appear after completed results.</p></div>`;
+  $('#leaderboard-summary').textContent = `${board.completed} completed ${board.completed===1?'match':'matches'} · ${data.departments.length} departments`;
+  $('#leaderboard-list').innerHTML = board.rows.map(row => `<li class="department-leader${row.rank===1&&row.wins>0?' is-leading':''}"><span class="leader-position" aria-label="${row.rank==null?'Unranked':`Rank ${row.rank}`}">${row.rank??'—'}</span>${departmentMark(row)}<div class="leader-department"><strong>${esc(row.id)}</strong><small>${esc(row.name)}</small></div><div class="leader-record"><strong>${row.wins} <span>${row.wins===1?'win':'wins'}</span></strong><small>${row.played?`${row.played} played`:'Yet to play'}</small></div></li>`).join('');
+  document.querySelectorAll('[data-category]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.category===leaderboardCategory)));
+}
+$('#points-event').addEventListener('change',renderPoints);
+$('.leaderboard-controls').addEventListener('click',event=>{
+  const button=event.target.closest('[data-category]');if(!button)return;
+  leaderboardCategory=button.dataset.category;renderLeaderboard();
+});
+renderPoints();renderLeaderboard();
+const liveMatches=matchesForRoster.filter(match=>match.status==='live').length;
+const liveShortcut=document.createElement('a');
+liveShortcut.className='live-shortcut';liveShortcut.href='#fixtures';
+liveShortcut.innerHTML=`<i aria-hidden="true"></i>${liveMatches} live ${liveMatches===1?'match':'matches'}<span aria-hidden="true">↗</span>`;
+liveShortcut.addEventListener('click',()=>{filters.status='live';renderFixtures();});
+$('.championship-numbers').append(liveShortcut);
+function applyView(focus=false){
+  const requested=window.location.hash.slice(1);
+  const view=['points','leaderboard'].includes(requested)?requested:'fixtures';
+  document.querySelectorAll('[data-section]').forEach(section=>{section.hidden=section.dataset.section!==view;});
+  $('[data-intro]').hidden=view!=='fixtures';
+  document.querySelectorAll('[data-view]').forEach(link=>{if(link.dataset.view===view)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');});
+  if(focus){
+    const heading=$(`[data-section="${view}"] h2`);heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});
+    window.scrollTo({top:0,behavior:'instant'});
+  }
+}
+window.addEventListener('hashchange',()=>applyView(true));
+applyView();

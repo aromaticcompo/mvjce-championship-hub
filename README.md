@@ -1,58 +1,47 @@
 # MVJCE Championship Hub
 
-Responsive inter-department sports fixtures, schedules, live match scores and animated arenas.
+A responsive, buildless sports hub for the MVJCE Inter-Department Championship. Serve this directory with any static web server; no dependency installation or build is needed.
 
-## Features
+## Views
 
-- Filter matches by event, department, date and status.
-- Use one fixture and score view. Event and status are immediately available; date and department are under More filters. Each fixture shows its scheduled time and venue.
-- View scores in animated arenas for all 10 registered sports. Events without fixtures have an arena preview with no invented teams, dates or scores.
-- See live and completed match scores with period-by-period scorecards.
-- Replay or pause arena entrances; reduced-motion preferences are respected.
+- Fixtures: event, date, department and status filters; schedules and venues; live and completed scorecards.
+- Points table: event-specific played/won/drawn/lost records for every department.
+- Leaderboard: department wins across all registered events, with Overall, Boys and Girls filters.
+- All 14 event categories have animated SVG arenas with replay, pause/resume and reduced-motion support. Events without fixtures offer an arena preview.
+
+## Ranking rule
+
+Departments rank by completed match wins only, as specified by the organiser. Draws and losses do not add wins. Equal win totals share competition rank (1, 1, 3); alphabetical ordering only stabilises the display, not the rank. Departments without a completed result are unranked. No medal weighting or separate points formula is applied.
+
+`rankings.js` is shared by both ranking views. Only the roster-filtered match set is passed into the calculator. Numeric final scores can determine a winner for goals, sets, games or board scores. For cricket, set an explicit `winner` to a department ID; a run/wicket score is never compared as a number. A `result: 'draw'` record counts as drawn. Results without a determinable outcome do not count.
 
 ## Event data
 
-The supplied event roster is stored in `data.js` under `eventGroups`:
+The organiser-supplied roster in `data.js` includes:
 
-- **Boys:** Kho Kho, Kabaddi, Football, Basketball, Cricket, Volleyball, Handball, Chess, Table Tennis.
-- **Girls:** Table Tennis, Kabaddi, Volleyball, Throwball, Chess.
+- Boys: Kho Kho, Kabaddi, Football, Basketball, Cricket, Volleyball, Handball, Chess, Table Tennis.
+- Girls: Table Tennis, Kabaddi, Volleyball, Throwball, Chess.
 
-The picker groups all 14 events by category. Only sample fixtures matching a registered sport/category pair appear. Men/Women labels map to Boys/Girls; legacy examples outside the roster and unassigned Open entries remain in the source but are hidden.
+All fixtures, scores, dates, venues and department lists remain sample data. Only one currently registered sample match is completed, so the preview leaderboard has one win. The website has no live scoring API. Replace sample records with approved data; real-time scoring requires a trusted service. All match times display in IST.
 
-All current fixtures, scores, dates, venues and department lists are sample data. The website is an independent design preview. It does not connect to a live scoring service.
-
-Edit `data.js` to add approved event records. Real-time scoring requires a trusted data service.
-
-All match times display in IST.
-
-## Run locally
-
-No build or dependency installation is required. Serve this directory with a static web server, for example:
-
-```sh
-python -m http.server 8000
-```
-
-Then open `http://localhost:8000`.
-
-## GitHub Pages
-
-This repository is ready for branch-based publishing: **Settings → Pages → Deploy from a branch → main → / (root) → Save**.
-
-All application files use relative paths, so project-site URLs are supported. `.nojekyll` keeps publishing static files without Jekyll processing.
+Only fixtures with a registered sport/category pair appear. Legacy Men/Women names map to Boys/Girls. Off-roster and unassigned Open examples remain in the source but are hidden.
 
 ## Files
 
-| File | Purpose |
-| --- | --- |
-| `index.html` | Page structure |
-| `data.js` | Event roster, fixtures and match scores |
-| `app.js` | Filtering, scorecards and navigation |
-| `courts.js` | Sport-specific SVG arenas and controls |
-| `styles.css`, `courts.css`, `compact.css`, `simple.css` | Styling, animation and simplified layout |
+- `index.html`: accessible views, navigation, filters and match dialog.
+- `data.js`: event roster and sample match records.
+- `app.js`: filters, scorecards, views and ranking presentation.
+- `rankings.js`: completed-result calculation and tied ranks.
+- `courts.js`: original sport-specific SVG arenas and animation controls.
+- `styles.css`, `courts.css`, `compact.css`, `simple.css`, `premium.css`: responsive styling and motion.
 
-## External assets
+The GitHub export places files at the repository root. Publish main / root through GitHub Pages; `.nojekyll` keeps the site static. All assets use relative paths.
 
-Fonts: DM Sans and Barlow Condensed via Google Fonts, with system fallbacks. Hero photograph: Unsplash image `photo-1521412644187-c49fa049e84d`. Arena surfaces and camera effects are original SVG/CSS illustrations, not player tracking.
+## Assets and accessibility
 
-New court illustration references: [KKFI](https://khokhofederation.in/rules-regulations/), [Rajasthan government](https://nrega.rajasthan.gov.in/Upload/circulars/Panchyatkhel_sankul.pdf), [IKF](https://www.kabaddiikf.com/images/new-IKF_Rules.pdf), [IHF](https://www.ihf.info/sites/default/files/2020-05/H%40S%20Booklet.pdf), [TFI](https://throwballindia.org/court-of-throwball). Kabaddi layouts distinguish Boys' and Girls' events. Arena geometry is illustrative, not a campus measurement claim.
+Typography: DM Sans and Barlow Condensed through Google Fonts, with system fallbacks. Current banner and arena art use original HTML/SVG/CSS. Arena animations illustrate venues, not player tracking. Native dialogs support Escape and backdrop close, return keyboard focus and prevent background scrolling. Reduced-motion preferences disable entrance animations.
+
+## Sites deployment
+
+`.openai/hosting.json` retains the existing project ID and `dist` static directory. Preserve the ID and public audience on future updates.
+

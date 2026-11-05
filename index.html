@@ -4,18 +4,21 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#112c24">
   <title>MVJCE — The Championship</title>
-  <meta name="description" content="MVJCE inter-department sports: fixtures, schedules and live match scores.">
-  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="courts.css"><link rel="stylesheet" href="compact.css"><link rel="stylesheet" href="simple.css">
+  <meta name="description" content="MVJCE inter-department sports: fixtures, live scores, event standings and department leaderboards ranked by wins.">
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="courts.css"><link rel="stylesheet" href="compact.css"><link rel="stylesheet" href="simple.css"><link rel="stylesheet" href="premium.css">
 </head>
 <body>
 <a class="skip" href="#fixtures">Skip to matches</a>
-<div class="sample-banner">Demo · Fixtures and scores are sample data</div>
+<div class="sample-banner">Demo · Fixtures, scores and standings are sample data</div>
 <header class="app-header">
   <a class="brand" href="#fixtures" aria-label="MVJCE Championship matches"><span class="brand-icon">M<span>↗</span></span><span>MVJCE<small>INTER-DEPARTMENT SPORTS</small></span></a>
+  <nav aria-label="Championship"><a href="#fixtures" data-view="fixtures" aria-current="page">Fixtures</a><a href="#points" data-view="points">Points table</a><a href="#leaderboard" data-view="leaderboard">Leaderboard</a></nav>
 </header>
 <main id="home">
-<h1 class="sr-only">MVJCE Inter-Department Championship</h1>
-<section id="fixtures" class="fixtures-section wrap">
+<div class="championship-intro wrap" data-intro>
+  <div class="championship-banner"><div><p class="championship-kicker">MVJCE · CAMPUS SPORTS</p><h1>Inter-department<br><em>Championship.</em></h1></div><div class="championship-numbers"><span><strong>14</strong>Events</span><span><strong>06</strong>Departments</span></div><div class="banner-court" aria-hidden="true"><i></i><i></i><i></i></div></div>
+</div>
+<section id="fixtures" class="fixtures-section wrap view-section" data-section="fixtures">
   <div class="section-heading"><h2>Fixtures &amp; scores</h2><span class="section-meta">Times in IST</span></div>
   <div class="match-controls">
     <label class="sport-picker" for="event-filter"><span>Event</span><select id="event-filter"><option value="all">All events</option></select></label>
@@ -25,7 +28,21 @@
   <div class="results-label"><span id="result-count" role="status" aria-live="polite"></span><button class="text-button" id="reset-filters" hidden>Clear filters</button></div>
   <div id="fixture-list" class="fixture-list"></div>
 </section>
+<section id="points" class="ranking-section wrap view-section" data-section="points" hidden aria-labelledby="points-title">
+  <div class="section-heading"><div><p class="section-kicker">EVENT STANDINGS</p><h2 id="points-title" tabindex="-1">Points table</h2></div><span class="ranking-tag">Ranked by wins</span></div>
+  <div class="ranking-toolbar"><label class="sport-picker" for="points-event"><span>Event</span><select id="points-event"></select></label><p id="points-summary" class="ranking-summary" role="status" aria-live="polite"></p></div>
+  <div class="table-shell"><table class="points-table"><caption class="sr-only">Department standings ranked by completed match wins</caption><thead><tr><th scope="col">Rank</th><th scope="col">Department</th><th scope="col"><abbr title="Played">P</abbr></th><th scope="col"><abbr title="Won">W</abbr></th><th scope="col"><abbr title="Drawn">D</abbr></th><th scope="col"><abbr title="Lost">L</abbr></th></tr></thead><tbody id="points-body"></tbody></table></div>
+  <p class="ranking-note">Completed matches only. Equal wins share a rank. Unplayed departments are unranked.</p>
+</section>
+<section id="leaderboard" class="ranking-section wrap view-section" data-section="leaderboard" hidden aria-labelledby="leaderboard-title">
+  <div class="section-heading"><div><p class="section-kicker">DEPARTMENT STANDINGS</p><h2 id="leaderboard-title" tabindex="-1">Leaderboard</h2></div><span class="ranking-tag">Most wins first</span></div>
+  <div class="leaderboard-controls" role="group" aria-label="Leaderboard category"><button type="button" data-category="all" aria-pressed="true">Overall</button><button type="button" data-category="Boys" aria-pressed="false">Boys</button><button type="button" data-category="Girls" aria-pressed="false">Girls</button></div>
+  <div id="leaderboard-feature"></div>
+  <p id="leaderboard-summary" class="ranking-summary" role="status" aria-live="polite"></p>
+  <ol id="leaderboard-list" class="department-leaders" aria-label="Department rankings"></ol>
+  <p class="ranking-note">Wins across all registered events. Equal wins share a rank.</p>
+</section>
 </main>
 <dialog id="match-dialog" aria-labelledby="match-title"><div class="dialog-top"><h2 id="match-title">Match details</h2><span class="dialog-demo">Demo data</span><button id="close-dialog" class="close-button" aria-label="Close match details">✕</button></div><div id="match-detail"></div></dialog>
-<script src="data.js"></script><script src="courts.js"></script><script src="app.js"></script>
+<script src="data.js"></script><script src="courts.js"></script><script src="rankings.js"></script><script src="app.js"></script>
 </body></html>
