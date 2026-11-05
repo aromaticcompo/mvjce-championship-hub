@@ -1,18 +1,18 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#112c24">
   <title>MVJCE — The Championship</title>
   <meta name="description" content="MVJCE inter-department sports: fixtures, live scores, event standings and department leaderboards ranked by wins.">
-  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="courts.css"><link rel="stylesheet" href="compact.css"><link rel="stylesheet" href="simple.css"><link rel="stylesheet" href="premium.css">
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="courts.css"><link rel="stylesheet" href="compact.css"><link rel="stylesheet" href="simple.css"><link rel="stylesheet" href="premium.css"><link rel="stylesheet" href="mobile.css">
 </head>
 <body>
 <a class="skip" href="#fixtures">Skip to matches</a>
-<div class="sample-banner">Demo · Fixtures, scores and standings are sample data</div>
+<div class="sample-banner">Demo · Sample fixtures, scores and standings</div>
 <header class="app-header">
   <a class="brand" href="#fixtures" aria-label="MVJCE Championship matches"><span class="brand-icon">M<span>↗</span></span><span>MVJCE<small>INTER-DEPARTMENT SPORTS</small></span></a>
-  <nav aria-label="Championship"><a href="#fixtures" data-view="fixtures" aria-current="page">Fixtures</a><a href="#points" data-view="points">Points table</a><a href="#leaderboard" data-view="leaderboard">Leaderboard</a></nav>
+  <nav aria-label="Championship"><a href="#fixtures" data-view="fixtures" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 10h16m-11 4h2m3 0h2m-7 3h2"/></svg><span>Fixtures</span></a><a href="#points" data-view="points"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 4h14v16H5zM5 9h14M10 9v11m5-11v11"/><path d="M9 2v4m6-4v4"/></svg><span>Points table</span></a><a href="#leaderboard" data-view="leaderboard"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4h6v5a3 3 0 0 1-6 0V4Zm0 1H5v3a4 4 0 0 0 4 4m6-7h4v3a4 4 0 0 1-4 4m-3 0v5m-4 4h8m-6-4h4l2 4H8l2-4Z"/></svg><span>Leaderboard</span></a></nav>
 </header>
 <main id="home">
 <div class="championship-intro wrap" data-intro>
@@ -32,6 +32,7 @@
   <div class="section-heading"><div><p class="section-kicker">EVENT STANDINGS</p><h2 id="points-title" tabindex="-1">Points table</h2></div><span class="ranking-tag">Ranked by wins</span></div>
   <div class="ranking-toolbar"><label class="sport-picker" for="points-event"><span>Event</span><select id="points-event"></select></label><p id="points-summary" class="ranking-summary" role="status" aria-live="polite"></p></div>
   <div class="table-shell"><table class="points-table"><caption class="sr-only">Department standings ranked by completed match wins</caption><thead><tr><th scope="col">Rank</th><th scope="col">Department</th><th scope="col"><abbr title="Played">P</abbr></th><th scope="col"><abbr title="Won">W</abbr></th><th scope="col"><abbr title="Drawn">D</abbr></th><th scope="col"><abbr title="Lost">L</abbr></th></tr></thead><tbody id="points-body"></tbody></table></div>
+  <p class="mobile-table-key"><span>P played</span><span>W won</span><span>D drawn</span><span>L lost</span></p>
   <p class="ranking-note">Completed matches only. Equal wins share a rank. Unplayed departments are unranked.</p>
 </section>
 <section id="leaderboard" class="ranking-section wrap view-section" data-section="leaderboard" hidden aria-labelledby="leaderboard-title">

@@ -33,7 +33,7 @@ Only fixtures with a registered sport/category pair appear. Legacy Men/Women nam
 - `app.js`: filters, scorecards, views and ranking presentation.
 - `rankings.js`: completed-result calculation and tied ranks.
 - `courts.js`: original sport-specific SVG arenas and animation controls.
-- `styles.css`, `courts.css`, `compact.css`, `simple.css`, `premium.css`: responsive styling and motion.
+- `styles.css`, `courts.css`, `compact.css`, `simple.css`, `premium.css`, `mobile.css`: responsive styling and motion.
 
 The GitHub export places files at the repository root. Publish main / root through GitHub Pages; `.nojekyll` keeps the site static. All assets use relative paths.
 
@@ -44,4 +44,8 @@ Typography: DM Sans and Barlow Condensed through Google Fonts, with system fallb
 ## Sites deployment
 
 `.openai/hosting.json` retains the existing project ID and `dist` static directory. Preserve the ID and public audience on future updates.
+
+## Mobile-first interface
+
+Phones use a compact header and fixed bottom navigation for Fixtures, Points table and Leaderboard. Safe-area insets protect controls on notched screens. Primary touch targets are at least 44 CSS pixels high, and native selects use 16px text. A shorter banner brings fixtures into the first screen. Match detail dialogs become scrollable bottom sheets with larger score text and animation controls. Standings fit a narrow screen with a visible P/W/D/L key. Mobile blur effects are reduced while arena entrances remain available. Small landscape windows have larger controls and omit the banner. Desktop styling is retained.
 
